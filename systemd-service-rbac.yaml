@@ -1,0 +1,149 @@
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: cloud-controller-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cloud-controller-manager
+subjects:
+- kind: User
+  name: cloud-controller-manager
+  apiGroup: rbac.authorization.k8s.io
+
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cloud-controller-manager
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  - serviceaccounts/token  
+  - configmaps
+  - endpoints
+  - namespaces
+  - secrets   
+  verbs:
+  - create
+  - get  
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+  - get
+  - list
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resourceNames:
+  - node-controller
+  - service-controller
+  - route-controller
+  resources:
+  - serviceaccounts/token
+  - secrets  
+  verbs:
+  - create
+  - get  
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - create
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+  - get
+  - list
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resourceNames:
+  - node-controller
+  - service-controller
+  - route-controller
+  resources:
+  - serviceaccounts/token
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumes
+  - services
+  - secrets
+  - endpoints
+  - serviceaccounts
+  verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - patch
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+    - get
+    - list
+    - watch
+    - delete
+    - patch
+    - update
+- apiGroups:
+  - ""
+  resources:
+  - services/status
+  verbs:
+    - update
+    - patch
+- apiGroups:
+  - ""
+  resources:
+  - nodes/status    
+  verbs:
+    - patch
+    - update
+- apiGroups:
+  - ""
+  resources:
+  - events
+  - endpoints
+  verbs:
+    - create
+    - patch
+    - update
+
+---
+

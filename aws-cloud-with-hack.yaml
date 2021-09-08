@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: aws-cloud-controller-manager
+  namespace: kube-system
+  labels:
+    k8s-app: aws-cloud-controller-manager
+spec:
+  selector:
+    matchLabels:
+      k8s-app: aws-cloud-controller-manager
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        k8s-app: aws-cloud-controller-manager
+    spec:
+      nodeSelector:
+        master: aws-ccm      
+      serviceAccountName: cloud-controller-manager
+      containers:
+        - name: aws-cloud-controller-manager
+          image: gcr.io/k8s-staging-provider-aws/cloud-controller-manager:v20210510-v1.21.0-alpha.0
+          volumeMounts:         
+          - name: foo
+            mountPath: "/etc/foo"
+            readOnly: true
+          - name: bar
+            mountPath: "/etc/bar"
+            readOnly: true  
+          - name: host-file
+            mountPath: /etc/config/cloud-config.conf 
+      
+
+          args:
+            - --v=2  
+            - --cloud-provider=aws
+            - --cloud-config=/etc/config/cloud-config.conf
+            - --client-ca-file=/etc/foo/ca.pem
+            - --requestheader-client-ca-file=/etc/bar/front-proxy-ca.pem
+            - --requestheader-allowed-names="front-proxy-client"
+            - --use-service-account-credentials=true  
+            - --allocate-node-cidrs=true  
+            - --configure-cloud-routes=false
+
+          resources:
+            requests:
+              cpu: 200m
+      hostNetwork: true          
+      volumes: 
+      - name: foo
+        secret:
+          secretName: mysecret
+      - name: bar
+        secret:
+          secretName: proxy-secret   
+      - name: host-file
+        hostPath:
+          path: /home/ubuntu/cilium/cloud-config.conf
+          type: File
