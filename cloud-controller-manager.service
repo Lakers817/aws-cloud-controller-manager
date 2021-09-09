@@ -1,0 +1,32 @@
+[Unit]
+Description=AWS Cloud Controller Manager
+Documentation=https://github.com/kubernetes/kubernetes
+
+[Service]
+ExecStart=/your-aws-binary-location/aws-cloud-controller-manager \
+  --cluster-name=kubernetes \
+  --cloud-provider=aws \
+  --authentication-kubeconfig=/file-path/cloud-controller-manager.kubeconfig \
+  --authorization-kubeconfig=/file-path/cloud-controller-manager.kubeconfig \
+  --kubeconfig=/file-path/cloud-controller-manager.kubeconfig \
+  --allocate-node-cidrs=true \
+  --requestheader-client-ca-file=/file-path/front-proxy-ca.pem  \
+  --requestheader-allowed-names="front-proxy-client" \
+  --requestheader-extra-headers-prefix=X-Remote-Extra- \
+  --requestheader-group-headers=X-Remote-Group \
+  --client-ca-file=/file-path/ca.pem \
+  --cloud-config=/file-path/cloud-config.conf \
+  --configure-cloud-routes=false \
+  --leader-elect=true \
+  --leader-elect-lease-duration="15s" \
+  --leader-elect-renew-deadline="10s" \
+  --leader-elect-resource-lock="leases" \
+  --leader-elect-resource-name="cloud-controller-manager" \
+  --leader-elect-retry-period="2s" \
+  --use-service-account-credentials="true" \
+  --v=2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

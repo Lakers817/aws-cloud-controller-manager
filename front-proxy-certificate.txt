@@ -1,0 +1,76 @@
+  
+
+sudo cat >> front-proxy-ca-config.json <<EOF 
+{
+    "signing": {
+        "default": {
+            "expiry": "8760h"
+        },
+        "profiles": {
+            "kubernetes": {
+                "usages": [
+                    "signing",
+                    "key encipherment",
+                    "server auth",
+                    "client auth"
+                ],
+                "expiry": "8760h"
+            }
+        }
+    }
+}
+
+EOF
+
+
+sudo cat <<EOF > front-proxy-ca-csr.json
+{
+    "CN": "kubernetes",
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+            "C": "Country",
+            "ST": "State",
+            "L": "Location",
+            "O": "Kubernetes",
+            "OU": "System"
+        }
+    ]
+}
+
+EOF
+
+
+sudo cfssl gencert -initca front-proxy-ca-csr.json | cfssljson -bare front-proxy-ca
+
+
+  
+ sudo cat > proxy-client-csr.json <<EOF
+{
+  "CN": "front-proxy-client",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "Country",
+      "ST": "State",
+      "L": "Location",
+      "O": "system:node-proxier",
+      "OU": "System"
+    }
+  ]
+}
+EOF
+
+
+sudo cfssl gencert \
+  -ca=front-proxy-ca.pem \
+  -ca-key=front-proxy-ca-key.pem \
+  -config=front-proxy-ca-config.json \
+  -profile=kubernetes \
+  proxy-client-csr.json | cfssljson -bare proxy-client

@@ -31,8 +31,6 @@ spec:
             readOnly: true  
           - name: host-file
             mountPath: /etc/config/cloud-config.conf 
-      
-
           args:
             - --v=2  
             - --cloud-provider=aws
@@ -43,7 +41,6 @@ spec:
             - --use-service-account-credentials=true  
             - --allocate-node-cidrs=true  
             - --configure-cloud-routes=false
-
           resources:
             requests:
               cpu: 200m
