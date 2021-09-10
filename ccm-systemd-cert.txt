@@ -1,0 +1,50 @@
+
+sudo cat > cloud-controller-manager-csr.json <<EOF
+
+{
+
+  "CN": "cloud-controller-manager",
+
+  "key": {
+
+    "algo": "rsa",
+
+    "size": 2048
+
+  },
+
+  "names": [
+
+    {
+
+      "C": "your country",
+
+      "ST": "your state",
+
+      "L": "your location",
+
+      "O": "cloud-controller-manager",
+
+      "OU": "System"
+
+    }
+
+  ]
+
+}
+
+EOF
+
+sudo cfssl gencert \
+
+  -ca=ca.pem \
+
+  -ca-key=ca-key.pem \
+
+  -config=ca-config.json \
+
+  -profile=kubernetes \
+
+  cloud-controller-manager-csr.json | cfssljson -bare cloud-controller-manager
+
+
