@@ -7,7 +7,6 @@ sudo cat > cloud-controller-manager-csr.json <<EOF
     "algo": "rsa",
     "size": 2048
   },
-
   "names": [
     {
       "C": "Country",
